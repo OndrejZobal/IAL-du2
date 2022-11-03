@@ -107,18 +107,27 @@ float *ht_get(ht_table_t *table, char *key) {
  * Pri implementácii NEVYUŽÍVAJTE funkciu ht_search.
  */
 void ht_delete(ht_table_t *table, char *key) {
-  ht_item_t** current = &((*table)[get_hash(key)]);
-  if (*current == NULL) return;
+  ht_item_t** start = &(*table)[get_hash(key)];
+  ht_item_t* current = *start;
+  if (current == NULL) return;
 
-  while ((*current)->next != NULL) {
-    if ((*current)->key == key) {
-      ht_item_t* delete = *current;
-
-      current = &(*current)->next->next;
-      free(delete);
+  // Searching for the target element
+  if (current->key != key) {
+    while (current->next != NULL) {
+      if (current->next->key == key) {
+        break;
+      }
+      current = current->next;
     }
-    current = &((*current)->next);
   }
+
+  // current->next now contains the element we are looking for!
+  if (current == *start) {
+    *start = NULL;
+  }
+   ht_item_t* delete = current->next;
+   current->next = current->next->next;
+   free (delete);
 }
 
 /*
@@ -129,10 +138,10 @@ void ht_delete(ht_table_t *table, char *key) {
  */
 void ht_delete_all(ht_table_t *table) {
   for (int i = 0; i < HT_SIZE; i++) {
-    ht_item_t** current = &((*table)[i]);
-    while (*current != NULL) {
-      ht_item_t* old = *current;
-      current = &((*current)->next);
+    ht_item_t* current = (*table)[i];
+    while (current != NULL) {
+      ht_item_t* old = current;
+      current = (current)->next;
       free(old);
     }
     ((*table)[i]) = NULL;
