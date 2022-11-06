@@ -47,7 +47,7 @@ void ht_init(ht_table_t *table) {
 ht_item_t *ht_search(ht_table_t *table, char *key) {
   ht_item_t* current = (*table)[get_hash(key)];
   while (current != NULL) {
-    if (current->key == key) {
+    if (!strcmp(current->key, key)) {
       return current;
     }
     current = current->next;
@@ -69,7 +69,7 @@ void ht_insert(ht_table_t *table, char *key, float value) {
   // Update the element if it already exists.
   ht_item_t** current = &((*table)[hash]);
   while (*current != NULL) {
-    if ((*current)->key == key) {
+    if (!strcmp((*current)->key, key)) {
       (*current)->value = value;
       return;
     }
@@ -78,7 +78,9 @@ void ht_insert(ht_table_t *table, char *key, float value) {
 
   // Init the new element.
   ht_item_t* new = malloc(sizeof(ht_item_t));
-  new->key = key;
+  char* new_key = malloc(strlen(key)+1);
+  strcpy(new_key, key);
+  new->key = new_key;
   new->value = value;
 
   // Link it into the list.
@@ -114,7 +116,7 @@ void ht_delete(ht_table_t *table, char *key) {
   // Searching for the target element
   if (current->key != key) {
     while (current->next != NULL) {
-      if (current->next->key == key) {
+      if (!strcmp(current->next->key, key)) {
         break;
       }
       current = current->next;
@@ -127,6 +129,7 @@ void ht_delete(ht_table_t *table, char *key) {
   }
    ht_item_t* delete = current->next;
    current->next = current->next->next;
+   free(delete->key);
    free (delete);
 }
 
@@ -141,7 +144,8 @@ void ht_delete_all(ht_table_t *table) {
     ht_item_t* current = (*table)[i];
     while (current != NULL) {
       ht_item_t* old = current;
-      current = (current)->next;
+      current = current->next;
+      free(old->key);
       free(old);
     }
     ((*table)[i]) = NULL;
