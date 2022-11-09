@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-Wall -std=c11 -pedantic -lm
+CFLAGS=-Wall -g3 -std=c11 -pedantic -lm
 FILES=btree.c ../btree.c stack.c ../test_util.c ../test.c
 
 .PHONY: test clean

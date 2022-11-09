@@ -73,16 +73,15 @@ void bst_insert(bst_node_t **tree, char key, int value) {
       (*current)->value = value;
       return;
     }
-    // Key doesnt exits, allocate it.
-    bst_node_t* new = malloc(sizeof(bst_node_t));
-    new->key = key;
-    new->value = value;
-    new->left = NULL;
-    new->right = NULL;
-
-    *current = new;
   }
-  // Node didn't exist, create it.
+  // Key doesnt exits, allocate it.
+  bst_node_t* new = malloc(sizeof(bst_node_t));
+  new->key = key;
+  new->value = value;
+  new->left = NULL;
+  new->right = NULL;
+
+  *current = new;
 }
 
 /*
@@ -99,6 +98,23 @@ void bst_insert(bst_node_t **tree, char key, int value) {
  * Funkciu implementujte iteratívne bez použitia vlastných pomocných funkcií.
  */
 void bst_replace_by_rightmost(bst_node_t *target, bst_node_t **tree) {
+  // Find rightmost
+  while (( *tree )->key == target->key) {
+    if (target->key < ( *tree )->key) {
+      tree = &( *tree )->left;
+    }
+    else if (target->key > ( *tree )->key) {
+      tree = &( *tree )->right;
+    }
+  }
+
+  // Reassign values.
+  target->key = ( *tree )->key;
+  target->value = ( *tree )->value;
+
+  // Free memory of the deleted node.
+  free(*tree);
+  *tree = NULL;
 }
 
 /*
@@ -114,6 +130,49 @@ void bst_replace_by_rightmost(bst_node_t *target, bst_node_t **tree) {
  * použitia vlastných pomocných funkcií.
  */
 void bst_delete(bst_node_t **tree, char key) {
+  // Find element for deletion.
+  while (true) {
+    if ((*tree) == NULL) {
+      // Key not found.
+      return;
+    }
+    if (( *tree )->key > key) {
+      tree = &(*tree)->right;
+    }
+    else if (( *tree )->key < key) {
+      tree = &(*tree)->left;
+    }
+    else {
+      break;
+    }
+  }
+
+  // Delete the element
+  // Right has value:
+  if ((*tree)->left != NULL && (*tree)->right == NULL) {
+    bst_node_t* delete = *tree;
+    *tree = (*tree)->left;
+    free(delete);
+  }
+  // Left has value:
+  if ((*tree)->left == NULL && (*tree)->right != NULL ) {
+    bst_node_t* delete = *tree;
+    *tree = (*tree)->right;
+    free(delete);
+  }
+  // Both children are assigned:
+  if ((*tree)->left != NULL && (*tree)->right != NULL ) {
+    bst_replace_by_rightmost(*tree, &(*tree)->left);
+    return;
+  }
+  // Neither child exists:
+  else {
+    bst_node_t* delete = *tree;
+    *tree = NULL;
+    free(delete);
+    return;
+  }
+
 }
 
 /*
@@ -127,6 +186,12 @@ void bst_delete(bst_node_t **tree, char key) {
  * vlastných pomocných funkcií.
  */
 void bst_dispose(bst_node_t **tree) {
+  stack_bst_t stack;
+  stack_bst_init(&stack);
+  // Fill stack with branch
+  while () {
+
+  }
 }
 
 /*
