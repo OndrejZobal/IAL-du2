@@ -109,29 +109,20 @@ float *ht_get(ht_table_t *table, char *key) {
  * Pri implementácii NEVYUŽÍVAJTE funkciu ht_search.
  */
 void ht_delete(ht_table_t *table, char *key) {
-  ht_item_t** start = &(*table)[get_hash(key)];
-  ht_item_t* current = *start;
+  ht_item_t** current = &(*table)[get_hash(key)];
   if (current == NULL) return;
 
-  // Searching for the target element
-  if (current->key != key) {
-    while (current->next != NULL) {
-      if (!strcmp(current->next->key, key)) {
-        break;
-      }
-      current = current->next;
-    }
+  while (strcmp((*current)->key, key)) {
+    current = &(*current)->next;
+    if (current == NULL) break;
   }
 
-  // current->next now contains the element we are looking for!
-  if (current == *start) {
-    *start = NULL;
-  }
-   ht_item_t* delete = current->next;
-   current->next = current->next->next;
-   free(delete->key);
-   free (delete);
+  ht_item_t* delete = *current;
+  *current = (*current)->next;
+  free(delete->key);
+  free(delete);
 }
+
 
 /*
  * Zmazanie všetkých prvkov z tabuľky.

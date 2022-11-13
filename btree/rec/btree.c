@@ -69,6 +69,7 @@ void bst_insert(bst_node_t **tree, char key, int value) {
   if (*tree != NULL) {
     if ((*tree)->key == key) {
       (*tree)->value = value;
+      return;
     }
 
     // Search for the target element.
@@ -162,7 +163,7 @@ void bst_delete(bst_node_t **tree, char key) {
     }
 
     // Left has value:
-    if ((*tree)->left == NULL && (*tree)->right != NULL ) {
+    if ((*tree)->left == NULL && (*tree)->right != NULL) {
       bst_node_t* delete = *tree;
       *tree = (*tree)->right;
       free(delete);
@@ -170,7 +171,7 @@ void bst_delete(bst_node_t **tree, char key) {
     }
 
     // Both children are assigned:
-    if ((*tree)->left != NULL && (*tree)->right != NULL ) {
+    if ((*tree)->left != NULL && (*tree)->right != NULL) {
       bst_replace_by_rightmost(*tree, &(*tree)->left);
       return;
     }
